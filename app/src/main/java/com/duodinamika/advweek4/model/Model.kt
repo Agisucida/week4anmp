@@ -13,3 +13,17 @@ data class Student(
     val photoUrl:String
 
 )
+
+
+data class Motogp(
+    val id:Int?,
+    val rider:String?,
+    val team:String?,
+    val bike:Bike?,
+    val images:String?
+)
+
+data class Bike(
+    val manufacturer:String?,
+    val model:String?
+)
