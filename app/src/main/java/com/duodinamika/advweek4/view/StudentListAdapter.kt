@@ -4,21 +4,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.duodinamika.advweek4.R
 import com.duodinamika.advweek4.model.Student
+import com.squareup.picasso.Picasso
 
 class StudentListAdapter(val studentList:ArrayList<Student>):RecyclerView.Adapter<StudentListAdapter.StudentViewHolder>() {
     class StudentViewHolder(view: View) : RecyclerView.ViewHolder(view){
         val lblId: TextView
         val lblName:TextView
         val btnDetail: Button
+        val imgStudent: ImageView
         init {
             lblId = view.findViewById(R.id.lblId)
             lblName = view.findViewById(R.id.lblName)
             btnDetail = view.findViewById(R.id.btnDetail)
+            imgStudent = view.findViewById(R.id.imgStudent)
         }
     }
 
@@ -36,8 +40,18 @@ class StudentListAdapter(val studentList:ArrayList<Student>):RecyclerView.Adapte
         holder.lblId.text = studentList[position].id
         holder.lblName.text = studentList[position].name
 
+        val picasso = Picasso.Builder(holder.itemView.context)
+        picasso.listener { picasso, uri, exception ->
+            exception.printStackTrace()
+        }
+
+        picasso.build().load(studentList[position].photoUrl).into(holder.imgStudent)
+
+
+        var studentId = holder.lblId.text.toString()
+
         holder.btnDetail.setOnClickListener {
-            val action = StudentListFragmentDirections.actionStudentDetail()
+            val action = StudentListFragmentDirections.actionStudentDetail(studentId)
             Navigation.findNavController(it).navigate(action)
         }
 
