@@ -1,5 +1,6 @@
 package com.duodinamika.advweek4.view
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,27 +10,27 @@ import android.widget.TextView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.duodinamika.advweek4.R
+import com.duodinamika.advweek4.databinding.StudentListItemBinding
 import com.duodinamika.advweek4.model.Student
 import com.squareup.picasso.Picasso
 
-class StudentListAdapter(val studentList:ArrayList<Student>):RecyclerView.Adapter<StudentListAdapter.StudentViewHolder>() {
-    class StudentViewHolder(view: View) : RecyclerView.ViewHolder(view){
-        val lblId: TextView
-        val lblName:TextView
-        val btnDetail: Button
-        val imgStudent: ImageView
-        init {
-            lblId = view.findViewById(R.id.lblId)
-            lblName = view.findViewById(R.id.lblName)
-            btnDetail = view.findViewById(R.id.btnDetail)
-            imgStudent = view.findViewById(R.id.imgStudent)
-        }
+class StudentListAdapter(val studentList:ArrayList<Student>):RecyclerView.Adapter<StudentListAdapter.StudentViewHolder>(), ButtonDetailClickListener {
+    class StudentViewHolder(val binding:StudentListItemBinding) : RecyclerView.ViewHolder(binding.root){
+//        val lblId: TextView
+//        val lblName:TextView
+//        val btnDetail: Button
+//        val imgStudent: ImageView
+//        init {
+//            lblId = view.findViewById(R.id.lblId)
+//            lblName = view.findViewById(R.id.lblName)
+//            btnDetail = view.findViewById(R.id.btnDetail)
+//            imgStudent = view.findViewById(R.id.imgStudent)
+//        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.student_list_item, parent, false)
-        return StudentViewHolder(view)
+        val binding = StudentListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return StudentViewHolder(binding)
     }
 
     override fun getItemCount(): Int {
@@ -37,23 +38,28 @@ class StudentListAdapter(val studentList:ArrayList<Student>):RecyclerView.Adapte
     }
 
     override fun onBindViewHolder(holder: StudentViewHolder, position: Int) {
-        holder.lblId.text = studentList[position].id
-        holder.lblName.text = studentList[position].name
-
-        val picasso = Picasso.Builder(holder.itemView.context)
-        picasso.listener { picasso, uri, exception ->
-            exception.printStackTrace()
-        }
-
-        picasso.build().load(studentList[position].photoUrl).into(holder.imgStudent)
+        holder.binding.student = studentList[position]
+        holder.binding.listener = this
 
 
-        var studentId = holder.lblId.text.toString()
 
-        holder.btnDetail.setOnClickListener {
-            val action = StudentListFragmentDirections.actionStudentDetail(studentId)
-            Navigation.findNavController(it).navigate(action)
-        }
+//        holder.lblId.text = studentList[position].id
+//        holder.lblName.text = studentList[position].name
+//
+//        val picasso = Picasso.Builder(holder.itemView.context)
+//        picasso.listener { picasso, uri, exception ->
+//            exception.printStackTrace()
+//        }
+//
+//        picasso.build().load(studentList[position].photoUrl).into(holder.imgStudent)
+//
+//
+//        var studentId = holder.lblId.text.toString()
+//
+//        holder.btnDetail.setOnClickListener {
+//            val action = StudentListFragmentDirections.actionStudentDetail(studentId)
+//            Navigation.findNavController(it).navigate(action)
+//        }
 
     }
 
@@ -61,5 +67,12 @@ class StudentListAdapter(val studentList:ArrayList<Student>):RecyclerView.Adapte
         studentList.clear()
         studentList.addAll(newStudentList)
         notifyDataSetChanged()
+    }
+
+    override fun onButtonClick(v: View) {
+        val id = v.tag.toString()
+        val action = StudentListFragmentDirections.actionStudentDetail(id)
+        Log.e("xxx", "onButtonClick: id=$id", )
+        Navigation.findNavController(v).navigate(action)
     }
 }
